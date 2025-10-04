@@ -282,7 +282,7 @@ YAML
 kubectl set env deployment/centraldashboard -n kubeflow \
   CD_USERID_HEADER=kubeflow-userid \
   CD_USERID_PREFIX="" \
-  CD_REGISTRATION_FLOW=false 2>&1 | grep -v "Warning"
+  CD_REGISTRATION_FLOW=false 2>&1 | grep -v "Warning" || true
 
 # Create EnvoyFilter to inject user header
 kubectl apply -f - << 'YAML'
