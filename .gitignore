@@ -1,0 +1,28 @@
+# Kubeflow local setup
+/tmp/kubeflow-manifests/
+*.log
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Kubernetes
+*.kubeconfig
+

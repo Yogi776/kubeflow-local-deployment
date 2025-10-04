@@ -1,0 +1,38 @@
+apiVersion: kubeflow.org/v1
+kind: Notebook
+metadata:
+  name: my-notebook
+  namespace: kubeflow-user-example-com
+spec:
+  template:
+    spec:
+      containers:
+      - name: my-notebook
+        # Official Kubeflow notebook image with JupyterLab
+        image: kubeflownotebookswg/jupyter-scipy:v1.9.0
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: "1.0Gi"
+          limits:
+            cpu: "2.0"
+            memory: "2.0Gi"
+        volumeMounts:
+        - name: workspace
+          mountPath: /home/jovyan
+      volumes:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: workspace-my-notebook
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: workspace-my-notebook
+  namespace: kubeflow-user-example-com
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

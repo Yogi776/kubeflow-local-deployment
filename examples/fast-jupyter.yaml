@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jupyter
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter
+  namespace: jupyter
+spec:
+  type: NodePort
+  ports:
+  - port: 8888
+    targetPort: 8888
+    nodePort: 30888
+  selector:
+    app: jupyter
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter
+  namespace: jupyter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyter
+  template:
+    metadata:
+      labels:
+        app: jupyter
+    spec:
+      containers:
+      - name: jupyter
+        # Ultra-lightweight Jupyter image - only ~200MB!
+        image: jupyter/minimal-notebook:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8888
+        env:
+        - name: JUPYTER_ENABLE_LAB
+          value: "yes"
+        # Password protection enabled
+        - name: JUPYTER_TOKEN
+          value: "jupyter123"
+        # Fix port conflict with K8s service env vars
+        - name: JUPYTER_PORT
+          value: "8888"
+        resources:
+          requests:
+            cpu: "100m"      # Minimal CPU
+            memory: "256Mi"  # Minimal memory
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+        # Fast startup - no persistent storage!
+        volumeMounts:
+        - name: workspace
+          mountPath: /home/jovyan/work
+      volumes:
+      - name: workspace
+        emptyDir: {}  # In-memory, super fast!
